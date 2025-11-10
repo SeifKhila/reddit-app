@@ -1,0 +1,11 @@
+.postlist {
+  display: grid;
+  gap: 0.9rem;
+  max-width: 800px;
+  margin: 1rem 0 2rem;
+}
+
+.postlist-empty {
+  color: #777;
+  margin: 1rem 0;
+}
