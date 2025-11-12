@@ -4,7 +4,8 @@
   "private": true,
   "proxy": "https://www.reddit.com",
 
-  "homepage": "https://USERNAME.github.io/REPO",
+  "homepage": "https://seifkhila.github.io/reddit-app",
+
 
   "dependencies": {
     "@reduxjs/toolkit": "^2.10.1",
