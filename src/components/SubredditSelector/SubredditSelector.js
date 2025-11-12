@@ -1,23 +1,27 @@
-import React from 'react';
-import './SubredditSelector.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedSubreddit } from '../../features/subreddits/subredditsSlice';
+import { fetchPostsBySubreddit } from '../../features/posts/postsSlice';
 
-function SubredditSelector({ value, options, onChange }) {
-  // dropdown to switch subreddit (keeping it simple)
+export default function SubredditSelector(props) {
+  const dispatch = useDispatch();
+  const { list, selected } = useSelector((s) => s.subreddits);
+
+  const onChange = (e) => {
+    const sub = e.target.value;
+    dispatch(setSelectedSubreddit(sub));
+    dispatch(fetchPostsBySubreddit(sub));
+  };
+
+  // forward any props (id, className, aria-*) to the select
   return (
-    <div className="subreddit-wrap">
-      <label htmlFor="subreddit" className="subreddit-label">subreddit</label>
-      <select
-        id="subreddit"
-        className="subreddit-select"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {options.map((name) => (
-          <option key={name} value={name}>r/{name}</option>
-        ))}
-      </select>
-    </div>
+    <select value={selected} onChange={onChange} {...props}>
+      {list.map((s) => (
+        <option key={s} value={s}>{s}</option>
+      ))}
+    </select>
   );
 }
 
-export default SubredditSelector;
+
+
+

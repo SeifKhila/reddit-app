@@ -1,5 +1,6 @@
 // src/api/reddit.js
 
+// src/api/reddit.js
 const safeThumb = (t) => (t && t.startsWith('http') ? t : '');
 
 const shape = (child) => {
@@ -11,6 +12,8 @@ const shape = (child) => {
     score: d.score,
     num_comments: d.num_comments,
     thumbnail: safeThumb(d.thumbnail),
+    permalink: d.permalink,          //  add this
+    created_utc: d.created_utc ?? 0, // (optional, for "3h ago")
   };
 };
 
@@ -31,6 +34,25 @@ export async function searchInSubreddit(name, term) {
   const json = await getJson(`/search.json?q=${encodeURIComponent(q)}&raw_json=1`);
   return json?.data?.children?.map(shape) ?? [];
 }
+
+export async function getPostComments(permalink) {
+  // permalink looks like: /r/webdev/comments/abc123/some_slug/
+  const json = await getJson(`${permalink}.json?raw_json=1`);
+
+const comments = (json?.[1]?.data?.children ?? [])
+  .map(({ data: c }) => ({
+    id: c.id,
+    author: c.author,
+    body: c.body,
+    score: c.score,
+    created_utc: c.created_utc ?? 0,
+  }))
+  .filter(c => !!c.body);
+
+
+  return comments;
+}
+
 
 
 

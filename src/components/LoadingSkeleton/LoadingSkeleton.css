@@ -12,7 +12,7 @@
   border: 1px solid #eee;
   border-radius: 6px;
   background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   animation: fadeIn 0.3s ease-in-out;
 }
 
@@ -39,15 +39,31 @@
 
 .skeleton-line.short { width: 40%; }
 .skeleton-line.medium { width: 60%; }
-.skeleton-line.long { width: 80%; }
+.skeleton-line.long  { width: 80%; }
 
 @keyframes shimmer {
-  0% { background-color: #e0e0e0; }
-  50% { background-color: #f0f0f0; }
+  0%   { background-color: #e0e0e0; }
+  50%  { background-color: #f0f0f0; }
   100% { background-color: #e0e0e0; }
 }
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* LoadingSkeleton.css */
+/* ...your current styles remain the same... */
+
+/* Prefer-reduced-motion: turn off shimmer for users who disable animations */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line {
+    animation: none;
+  }
+}
+
+/* Optional dark-mode support (if you ever add it) */
+@media (prefers-color-scheme: dark) {
+  .skeleton-card { background-color: #0f172a; border-color: #1f2937; }
+  .skeleton-thumbnail,
+  .skeleton-line  { background-color: #1f2937; }
 }

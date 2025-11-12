@@ -1,13 +1,160 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ---------- Root Variables ---------- */
+:root {
+  --bg: #fcfcfd;
+  --card: #fff;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #ff4500;       /* Reddit orange */
+  --accent-600: #e03e00;   /* Darker hover tone */
+  --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* ---------- Base Reset ---------- */
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
 }
+
+/* Accessibility: keyboard focus outline */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Layout Containers ---------- */
+.container {
+  max-width: 960px;
+  margin: 32px auto 64px;
+  padding: 0 16px;
+}
+
+.hero {
+  margin: 8px 0 18px;
+}
+
+.title {
+  margin: 0 0 14px;
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: 0.2px;
+}
+
+main {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 0 16px 48px;
+}
+
+/* ---------- Controls (Subreddit + viewing) ---------- */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 6px;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+}
+
+.label {
+  min-width: 90px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.controls select {
+  height: 38px;
+  padding: 0 12px;
+  line-height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+}
+
+.viewing {
+  margin-left: auto;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ---------- Inputs, Buttons, and Selects ---------- */
+input[type="text"],
+select,
+button,
+.btn {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+input[type="text"] {
+  padding: 10px 12px;
+}
+
+input[type="text"]:focus,
+select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.18);
+}
+
+button,
+.btn {
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+button:hover,
+.btn:hover {
+  background: #f6f7fb;
+}
+
+button.primary,
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+button.primary:hover,
+.btn.primary:hover {
+  background: var(--accent-600);
+  transform: translateY(-1px);
+}
+
+/* ---------- Lists / Utility ---------- */
+.post-list {
+  display: grid;
+  gap: 14px;
+}
+
+.error {
+  color: #b42318;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .controls {
+    flex-wrap: wrap;
+  }
+
+  .viewing {
+    margin-left: 0;
+    width: 100%;
+    padding-top: 6px;
+  }
+}
+
+
+

@@ -1,31 +1,28 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './SearchBar.css';
 
-function SearchBar({ onSearch }) {
-  // local input state
+export default function SearchBar({ onSearch, placeholder = 'search reddit...' }) {
   const [term, setTerm] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!term.trim()) return;
-    onSearch(term.trim());
+    onSearch?.(term.trim());
   };
 
   return (
-    <form className="search-form" onSubmit={handleSubmit}>
+    <form className="searchbar" onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="search reddit..."
         value={term}
         onChange={(e) => setTerm(e.target.value)}
-        className="search-input"
-        aria-label="search"
+        placeholder={placeholder}
+        aria-label="Search Reddit"
       />
-      <button type="submit" className="search-btn">
+      <button className="btn primary" type="submit">
         Search
       </button>
     </form>
   );
 }
 
-export default SearchBar;
+

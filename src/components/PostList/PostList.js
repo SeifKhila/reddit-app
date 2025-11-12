@@ -1,28 +1,25 @@
-import React from 'react';
-import './PostList.css';
+import { useSelector } from 'react-redux';
+import LoadingSkeleton from '../LoadingSkeleton/LoadingSkeleton';
 import Post from '../Post/Post';
 
-function PostList({ posts }) {
-  // just render list of cards
-  if (!posts || posts.length === 0) {
-    return <p className="postlist-empty">no posts yet</p>;
-  }
+function PostList() {
+  const { items, isLoading, error } = useSelector((s) => s.posts);
+
+  if (isLoading) return <LoadingSkeleton />;
+  if (error) return <p style={{ color: 'crimson' }}>{error}</p>;
+  if (!Array.isArray(items) || items.length === 0) return <p>No posts yet.</p>;
 
   return (
-    <section className="postlist">
-      {posts.map((p) => (
-        <Post
-          key={p.id}
-          title={p.title}
-          author={p.author}
-          score={p.score}
-          comments={p.num_comments}
-          thumbnail={p.thumbnail}
-        />
+    <div className="post-list">
+      {items.map((p) => (
+        <Post key={p.id} {...p} />
       ))}
-    </section>
+    </div>
   );
 }
 
 export default PostList;
+
+
+
 
