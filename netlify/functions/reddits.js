@@ -1,27 +1,19 @@
-// netlify/functions/reddit.js
+﻿// netlify/functions/reddits.js
 export async function handler(event) {
   try {
-    const url = event.queryStringParameters?.url || '';
-    if (!url || !url.startsWith('/')) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Missing or invalid ?url=/path' })
-      };
-    }
+    const qs = event.queryStringParameters || {};
+    const path = (qs.path || "r/webdev/hot.json").replace(/^\//, "");
+    const url = `https://www.reddit.com/${path}`;
 
-    const upstream = `https://www.reddit.com${url}`;
-    const res = await fetch(upstream, { headers: { 'User-Agent': 'netlify-proxy/1.0' } });
+    const resp = await fetch(url);
+    const json = await resp.json();
 
-    const text = await res.text();
     return {
-      statusCode: res.status,
-      headers: { 'Content-Type': 'application/json' },
-      body: text
+      statusCode: 200,
+      headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+      body: JSON.stringify(json),
     };
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Proxy failed', message: String(err) })
-    };
+  } catch (e) {
+    return { statusCode: 500, body: JSON.stringify({ error: e.message }) };
   }
 }
