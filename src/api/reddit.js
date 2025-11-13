@@ -11,9 +11,14 @@ const shape = (child) => {
 };
 
 const FN_BASE = "/.netlify/functions/reddits";
+
+// Sends path and query separately so ? isn't encoded
 async function fetchViaFn(pathWithQuery) {
   const clean = pathWithQuery.replace(/^\//, "");
-  const url = `${FN_BASE}?path=${encodeURIComponent(clean)}`;
+  const [pathOnly, query = ""] = clean.split("?"); // split at ?
+  const url = `${FN_BASE}?path=${encodeURIComponent(pathOnly)}${
+    query ? `&${query}` : ""
+  }`;
   const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error(`status ${res.status}`);
   return res.json();
