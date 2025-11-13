@@ -1,6 +1,8 @@
-import React, { useState } from 'react'; // <- make sure useState is imported
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleComments, fetchCommentsForPost } from '../../features/comments/commentsSlice';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import './Post.css';
 
 function timeAgo(utc) {
@@ -14,7 +16,6 @@ function timeAgo(utc) {
   if (minutes > 0) return `${minutes}m ago`;
   return `${seconds}s ago`;
 }
-
 
 // helper: make a short badge from /r/<name> in the permalink
 function abbrFromPermalink(permalink = '') {
@@ -65,7 +66,12 @@ function Post({ id, title, author, score, num_comments, thumbnail, permalink, cr
 
       <div className="content">
         <h3 className="title">
-          <a className="title-link" href={`https://www.reddit.com${permalink}`} target="_blank" rel="noreferrer">
+          <a
+            className="title-link"
+            href={`https://www.reddit.com${permalink}`}
+            target="_blank"
+            rel="noreferrer"
+          >
             {title}
           </a>
         </h3>
@@ -83,12 +89,22 @@ function Post({ id, title, author, score, num_comments, thumbnail, permalink, cr
             {isLoading && <p>Loading comments…</p>}
             {error && <p style={{ color: 'crimson' }}>{error}</p>}
             {!isLoading && !error && comments.length === 0 && <p>No comments.</p>}
-            {!isLoading && !error && comments.map((c) => (
-              <div key={c.id} className="comment">
-                <div className="comment-meta">u/{c.author} • {timeAgo(c.created_utc)}</div>
-                <p className="comment-body">{c.body}</p>
-              </div>
-            ))}
+
+            {!isLoading &&
+              !error &&
+              comments.map((c) => (
+                <div key={c.id} className="comment">
+                  <div className="comment-meta">
+                    u/{c.author} • {timeAgo(c.created_utc)}
+                  </div>
+
+                  <div className="comment-body">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {c.body}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              ))}
           </div>
         )}
       </div>

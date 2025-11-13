@@ -1,3 +1,4 @@
+// src/features/comments/commentsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { getPostComments } from '../../api/reddit';
 
@@ -5,9 +6,27 @@ import { getPostComments } from '../../api/reddit';
   Concept:
   Each post can have its own set of comments.
   We store them by post ID so each one loads independently.
+
+  Shape:
+  state.comments.byPostId = {
+    [postId]: {
+      items: [],        // array of comments
+      isLoading: false,
+      error: null,
+      isOpen: false     // whether comments panel is open
+    }
+  }
 */
 
+const makeEmptySlot = () => ({
+  items: [],
+  isLoading: false,
+  error: null,
+  isOpen: false,
+});
+
 // Async thunk → fetch comments for a given post
+// arg is an object: { postId, permalink }
 export const fetchCommentsForPost = createAsyncThunk(
   'comments/fetchForPost',
   async ({ postId, permalink }) => {
@@ -16,9 +35,8 @@ export const fetchCommentsForPost = createAsyncThunk(
   }
 );
 
-
 const initialState = {
-  byPostId: {} // Example: { abc123: { items: [], isLoading: false, error: null, isOpen: false } }
+  byPostId: {},
 };
 
 const commentsSlice = createSlice({
@@ -26,35 +44,44 @@ const commentsSlice = createSlice({
   initialState,
   reducers: {
     toggleComments(state, action) {
-      const id = action.payload;
-      // Get current slot or create an empty one
-      const slot = state.byPostId[id] ?? { items: [], isLoading: false, error: null, isOpen: false };
+      const postId = action.payload;
+      const slot = state.byPostId[postId] ?? makeEmptySlot();
       slot.isOpen = !slot.isOpen;
-      state.byPostId[id] = slot;
+      state.byPostId[postId] = slot;
     },
   },
   extraReducers: (builder) => {
     builder
+      // loading
       .addCase(fetchCommentsForPost.pending, (state, action) => {
-        const { arg: postId } = action.meta;
-        const slot = state.byPostId[postId] ?? { items: [], isLoading: false, error: null, isOpen: true };
+        const { postId } = action.meta.arg; // ✅ correct: arg is { postId, permalink }
+        const slot = state.byPostId[postId] ?? makeEmptySlot();
         slot.isLoading = true;
         slot.error = null;
         slot.isOpen = true; // open while loading
         state.byPostId[postId] = slot;
       })
+      // success
       .addCase(fetchCommentsForPost.fulfilled, (state, action) => {
         const { postId, comments } = action.payload;
-        state.byPostId[postId].isLoading = false;
-        state.byPostId[postId].items = comments;
+        const slot = state.byPostId[postId] ?? makeEmptySlot();
+        slot.isLoading = false;
+        slot.error = null;
+        slot.items = comments;
+        state.byPostId[postId] = slot;
       })
+      // error
       .addCase(fetchCommentsForPost.rejected, (state, action) => {
-        const { arg: postId } = action.meta;
-        state.byPostId[postId].isLoading = false;
-        state.byPostId[postId].error = action.error.message || 'Failed to load comments';
+        const { postId } = action.meta.arg;
+        const slot = state.byPostId[postId] ?? makeEmptySlot();
+        slot.isLoading = false;
+        slot.error =
+          action.error?.message || 'Failed to load comments';
+        state.byPostId[postId] = slot;
       });
   },
 });
 
 export const { toggleComments } = commentsSlice.actions;
 export default commentsSlice.reducer;
+
